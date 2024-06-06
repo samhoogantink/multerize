@@ -1,7 +1,7 @@
 {
   "name": "multerize",
   "type": "module",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -15,7 +15,13 @@
   },
   "keywords": [
     "hono",
-    "files"
+    "files",
+    "upload",
+    "multer",
+    "cloudflare",
+    "r2",
+    "s3",
+    "buckets"
   ],
   "exports": {
     ".": {

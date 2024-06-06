@@ -26,7 +26,7 @@ Don't forget the `enctype="multipart/form-data"` in your form.
 
 ```typescript
 import { Hono } from 'hono';
-import Multerize, { R2StorageProvider, HonoFileBodyEnv } from 'multerize';
+import { Multerize, R2StorageProvider, HonoFileBodyEnv } from 'multerize';
 
 const multerize = new Multerize({
     storage: new R2StorageProvider({
@@ -36,18 +36,18 @@ const multerize = new Multerize({
 
 const app = new Hono<{ Variables: HonoFileBodyEnv; }>();
 
-app.post('/profile', upload.single('avatar'), async (c) {
+app.post('/profile', upload.single('avatar'), async (c) => {
   // c.get('file') is the `avatar` file
   // c.req.formData() will hold the text fields, if there were any
 })
 
-app.post('/photos/upload', upload.array('photos', 12), async (c) {
+app.post('/photos/upload', upload.array('photos', 12), async (c) => {
   // c.get('files') is array of `photos` files
   // c.req.formData() will contain the text fields, if there were any
 })
 
 const cpUpload = upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-app.post('/cool-profile', cpUpload, async (c) {
+app.post('/cool-profile', cpUpload, async (c) => {
   // c.get('files') is an object (String -> Array) where fieldname is the key, and the value is array of files
   //
   // e.g.
@@ -62,13 +62,13 @@ In case you need to handle a text-only multipart form, you should use the `.none
 
 ```javascript
 import { Hono } from 'hono';
-import Multerize, { HonoFileBodyEnv } from 'multerize';
+import { Multerize, HonoFileBodyEnv } from 'multerize';
 
 const multerize = new Multerize();
 
 const app = new Hono<{ Variables: HonoFileBodyEnv; }>();
 
-app.post('/profile', upload.none(), async (c) {
+app.post('/profile', upload.none(), async (c) => {
   // c.req.formData() contains the text fields
 })
 ```

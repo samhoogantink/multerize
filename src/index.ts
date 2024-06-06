@@ -12,8 +12,6 @@ const createMulterize = (config?: CreateConfig) => {
     return new Multerize(config);
 }
 
-export default Multerize;
-
 export {
     Multerize,
     createMulterize,

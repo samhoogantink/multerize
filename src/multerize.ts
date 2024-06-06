@@ -158,7 +158,6 @@ export default class Multerize {
 
         const parsedFiles = await this._filterFiles(unfilteredFiles);
         const files = await this.config.storage._handleFile(c, parsedFiles);
-        console.log(files)
 
         // Initialize default values
         c.set('file', null);

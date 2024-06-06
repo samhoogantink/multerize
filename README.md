@@ -26,15 +26,17 @@ Don't forget the `enctype="multipart/form-data"` in your form.
 
 ```typescript
 import { Hono } from 'hono';
-import { Multerize, R2StorageProvider, HonoFileBodyEnv } from 'multerize';
+import { Multerize, R2StorageProvider, MulterizeHonoBindings } from 'multerize';
 
 const multerize = new Multerize({
-    storage: new R2StorageProvider({
-        r2Client: env.R2_BUCKET
+    storage: new R2StorageProvider<Env>({
+        r2Client: env.R2_BUCKET,
+        // or
+        envBucketKey: 'R2_BUCKET' // we'll look in the Hono Context for this key
     })
 });
 
-const app = new Hono<{ Variables: HonoFileBodyEnv; }>();
+const app = new Hono<{ Variables: MulterizeHonoBindings; Bindings: Env; }>();
 
 app.post('/profile', upload.single('avatar'), async (c) => {
   // c.get('file') is the `avatar` file
@@ -166,8 +168,11 @@ where you are handling the uploaded files.
 The R2 storage engine gives you full control on storing files to your R2 bucket. This options can only be used inside CloudFlare Workers
 
 ```typescript
-const storage = new R2StorageProvider({
+const storage = new R2StorageProvider<Env>({
   r2Client: env.R2_BUCKET,
+  // or
+  envBucketKey: 'R2_BUCKET',
+
   r2StorageClass: 'Standard',
   r2CustomMetaData: async (c, file) => {
       return {
@@ -187,8 +192,16 @@ const storage = new R2StorageProvider({
 const upload = new Multerize({ storage: storage })
 ```
 
-There are six options available, `r2Client`, `r2StorageClass`, `r2CustomMetaData`, `returnBuffer`, `destination` and `filename`. Some are
+There are seven options available, `r2Client`, `envBucketKey`, `r2StorageClass`, `r2CustomMetaData`, `returnBuffer`, `destination` and `filename`. Some are
 functions that determine where the file should be stored.
+
+`r2Client` is the R2 Client provided in CloudFlare Workers. 
+
+`envBucketKey` is an alternative to `r2Client`. You can provide a key that's available in the environment, we'll then take a look there and extract the R2 Client.
+
+`r2StorageClass` you can provide either the `Standard` or `InfrequentAccess` class. Take a look at the [CloudFlare docs](https://developers.cloudflare.com/r2/buckets/storage-classes/) for more information.
+
+`returnBuffer` if the R2 Storage Provider should return a buffer in the `c.get('file')` object. Defaults to false.
 
 `destination` is used to determine within which folder the uploaded files should
 be stored. This can also be given as a `string` (e.g. `'/tmp/uploads'`). If no
@@ -237,8 +250,8 @@ Specifying the limits can help protect your site against denial of service (DoS)
 Set this to a function to control which files should be uploaded and which
 should be skipped. The function should look like this:
 
-```javascript
-const fileFilter = async (c, file) {
+```typescript
+const fileFilter = async (c, file) => {
 
   // To reject this file pass `false`, like so:
   return false;

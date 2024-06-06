@@ -26,6 +26,11 @@ export class R2StorageProvider<E extends DefaultEnv = any, V extends DefaultEnv 
         this.disableDestinationTrailSlashWarning = options.disableDestinationTrailSlashWarning ?? this.disableDestinationTrailSlashWarning;
         this.fileName = options.fileName ?? this.fileName;
         this.r2CustomMetadata = options.r2CustomMetadata ?? this.r2CustomMetadata;
+
+        // Check if the R2 client or environment bucket key is provided
+        if(!this.r2Client && !this.envBucketKey) {
+            throw new MissingR2BucketError();
+        }
     }
 
     public async _handleFile(c: Context, files: SmallFileResult[]): Promise<FileResult[]> {
@@ -34,7 +39,7 @@ export class R2StorageProvider<E extends DefaultEnv = any, V extends DefaultEnv 
         for(const file of files) {
             const destination = await this.destination(c, file);
             
-            if(!this.disableDestinationTrailSlashWarning && !destination.endsWith('/')) {
+            if(!this.disableDestinationTrailSlashWarning && (destination !== '' && !destination.endsWith('/'))) {
                 console.warn(`The destination "${destination}" does not end with a forward slash. This could lead to unexpected behavior.`);
             }
 

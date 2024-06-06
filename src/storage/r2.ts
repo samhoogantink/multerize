@@ -1,9 +1,13 @@
 import type { Context } from 'hono';
 import type { StorageProvider, SmallFileResult, FileResult, R2StorageProviderOptions, R2StorageProviderClass, R2StorageProviderDestination, R2StorageProviderFileName, R2StorageProviderCustomMetadata } from './../types';
 
+// Exceptions
+import MissingR2BucketError from './../exceptions/MissingR2BucketError';
+
 export class R2StorageProvider implements StorageProvider {
 
     private r2Client: R2Bucket = null!;
+    private envBucketKey: string = null!;
     private r2StorageClass: R2StorageProviderClass = 'Standard';
     private returnBuffer: boolean = false;
 
@@ -14,7 +18,8 @@ export class R2StorageProvider implements StorageProvider {
     private disableDestinationTrailSlashWarning: boolean = false;
 
     public constructor(options: R2StorageProviderOptions) {
-        this.r2Client = options.r2Client;
+        this.r2Client = options.r2Client ?? this.r2Client;
+        this.envBucketKey = options.envBucketKey ?? this.envBucketKey;
         this.r2StorageClass = options.r2StorageClass ?? this.r2StorageClass;
         this.returnBuffer = options.returnBuffer ?? this.returnBuffer;
         this.destination = options.destination ?? this.destination;
@@ -53,10 +58,29 @@ export class R2StorageProvider implements StorageProvider {
         return results;
     }
 
+    private detectBucket(c: Context) {
+        if(this.r2Client) {
+            return this.r2Client;
+        }
+
+        if(!this.envBucketKey || typeof this.envBucketKey !== 'string') {
+            throw new MissingR2BucketError();
+        }
+
+        const bucket = c.env[this.envBucketKey];
+        if(!bucket) {
+            throw new MissingR2BucketError();
+        }
+
+        this.r2Client = bucket;
+        return c.env[this.envBucketKey] as R2Bucket;
+    }
+
     private async _uploadToBucket(c: Context, path: string, file: SmallFileResult) {
+        const bucket = this.detectBucket(c);
         const customMetaData = await this.r2CustomMetadata(c, file);
 
-        await this.r2Client.put(path, file.buffer, {
+        await bucket.put(path, file.buffer, {
             httpMetadata: {
                 contentType: file.mimetype
             },

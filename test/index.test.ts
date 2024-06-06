@@ -3,9 +3,14 @@ import { Hono } from 'hono';
 import { Miniflare } from 'miniflare';
 import { describe, it, expect } from 'vitest';
 import { Multerize, HonoFileBodyEnv, R2StorageProvider, imagesOnlyFilter } from './../src';
+import type { R2Bucket } from '@cloudflare/workers-types/experimental';
+
+export type Bindings = {
+    R2_BUCKET: R2Bucket;
+}
 
 describe('Hono Files', () => {
-    const app = new Hono<{ Variables: HonoFileBodyEnv; }>();
+    const app = new Hono<{ Variables: HonoFileBodyEnv; Bindings: Bindings; }>();
 
     const miniflare = new Miniflare({
         modules: true,
@@ -19,7 +24,8 @@ describe('Hono Files', () => {
 
             const multerize = new Multerize({
                 storage: new R2StorageProvider({
-                    r2Client: testBucket,
+                    // r2Client: testBucket,
+                    envBucketKey: 'R2_BUCKET',
                     r2CustomMetadata: async (c, file) => ({ fieldName: file.fieldName }),
                     destination: async (c, file) => 'just_a_test/',
                     fileName: async (c, file) => crypto.randomUUID() + '.png'
@@ -43,13 +49,13 @@ describe('Hono Files', () => {
             formData.append('file', file, 'default.png');
             formData.append('test', 'test.png');
 
-            const req = new Request('http://localhost/upload', {
+            const requestBody = {
                 method: 'POST',
                 headers: { },
                 body: formData
-            });
+            };
         
-            const res = await app.request(req);
+            const res = await app.request('http://localhost/upload', requestBody, { R2_BUCKET: testBucket });
 
             expect(res).not.toBeNull();
             expect(res.status).toBe(200);

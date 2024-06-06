@@ -142,7 +142,11 @@ export interface R2StorageProviderOptions {
     /**
      * The R2 client.
      */
-    r2Client: R2Bucket;
+    r2Client?: R2Bucket;
+    /**
+     * The environment variable key for the R2 bucket. Value will be used if `r2Client` is not provided.
+     */
+    envBucketKey?: string;
     /**
      * The storage class of the file in the R2 bucket.
      * @link https://developers.cloudflare.com/r2/buckets/storage-classes/

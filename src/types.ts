@@ -158,6 +158,11 @@ export interface R2StorageProviderOptions {
      */
     destination?: R2StorageProviderDestination;
     /**
+     * Whether to disable the destination trail slash warning.
+     * @default false
+     */
+    disableDestinationTrailSlashWarning?: boolean;
+    /**
      * The filename of the file in the R2 bucket.
      */
     fileName?: R2StorageProviderFileName;

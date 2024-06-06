@@ -178,8 +178,8 @@ const storage = new R2StorageProvider({
   destination: async (c, file) => {
     return '/folder/my-uploads/'; // Note: ALWAYS end with a forward slash at the end of the destination. Multerize doesn't add this for you.
   },
-  filenName: asymc (c, file) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+  filenName: async (c, file) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     return file.fieldName + '-' + uniqueSuffix;
   }
 })

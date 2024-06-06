@@ -11,11 +11,14 @@ export class R2StorageProvider implements StorageProvider {
     private fileName: R2StorageProviderFileName = async (_c, file) => file.originalName;
     private r2CustomMetadata: R2StorageProviderCustomMetadata = async () => ({});
 
+    private disableDestinationTrailSlashWarning: boolean = false;
+
     public constructor(options: R2StorageProviderOptions) {
         this.r2Client = options.r2Client;
         this.r2StorageClass = options.r2StorageClass ?? this.r2StorageClass;
         this.returnBuffer = options.returnBuffer ?? this.returnBuffer;
         this.destination = options.destination ?? this.destination;
+        this.disableDestinationTrailSlashWarning = options.disableDestinationTrailSlashWarning ?? this.disableDestinationTrailSlashWarning;
         this.fileName = options.fileName ?? this.fileName;
         this.r2CustomMetadata = options.r2CustomMetadata ?? this.r2CustomMetadata;
     }
@@ -25,6 +28,11 @@ export class R2StorageProvider implements StorageProvider {
 
         for(const file of files) {
             const destination = await this.destination(c, file);
+            
+            if(!this.disableDestinationTrailSlashWarning && !destination.endsWith('/')) {
+                console.warn(`The destination "${destination}" does not end with a forward slash. This could lead to unexpected behavior.`);
+            }
+
             const fileName = await this.fileName(c, file);
             const path = `${destination}${fileName}`;
 

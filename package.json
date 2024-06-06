@@ -44,9 +44,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/samhoogantink/hono-file-body.git"
+    "url": "https://github.com/samhoogantink/multerize.git"
   },
-  "homepage": "https://github.com/samhoogantink/hono-file-body",
+  "homepage": "https://github.com/samhoogantink/multerize#readme",
   "author": "@samhoogantink",
   "license": "MIT",
   "devDependencies": {

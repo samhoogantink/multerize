@@ -2,7 +2,7 @@ import { openAsBlob } from 'fs';
 import { Hono } from 'hono';
 import { Miniflare } from 'miniflare';
 import { describe, it, expect } from 'vitest';
-import Multerize, { HonoFileBodyEnv, R2StorageProvider } from './../src';
+import { Multerize, HonoFileBodyEnv, R2StorageProvider } from './../src';
 
 describe('Hono Files', () => {
     const app = new Hono<{ Variables: HonoFileBodyEnv; }>();

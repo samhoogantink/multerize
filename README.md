@@ -1,6 +1,8 @@
 # Multerize
 
-Multerize is a Hono middleware for handling `multipart/form-data`, which is primarily used for uploading files. It's API is based on [Multer](https://github.com/expressjs/multer). Please note that it's not exactly the same.
+Multerize is a Hono middleware for handling `multipart/form-data`, which is primarily used for uploading files. It's API is based on [Multer](https://github.com/expressjs/multer). Please note that it's not exactly the same, and currently is being focussed to work only on CloudFlare Workers. Other platforms are not tested.
+
+A demo can be found here: [multerize-workers-test](https://github.com/samhoogantink/multerize-workers-test)
 
 **NOTE**: Multerize will not process any form which is not multipart (`multipart/form-data`).
 
@@ -64,11 +66,11 @@ In case you need to handle a text-only multipart form, you should use the `.none
 
 ```javascript
 import { Hono } from 'hono';
-import { Multerize, HonoFileBodyEnv } from 'multerize';
+import { Multerize, MulterizeHonoBindings } from 'multerize';
 
 const multerize = new Multerize();
 
-const app = new Hono<{ Variables: HonoFileBodyEnv; }>();
+const app = new Hono<{ Variables: MulterizeHonoBindings; }>();
 
 app.post('/profile', upload.none(), async (c) => {
   // c.req.formData() contains the text fields

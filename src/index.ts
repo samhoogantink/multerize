@@ -1,4 +1,4 @@
-import type { CreateConfig, HonoFileBodyEnv, HandleFieldsOptions, FileResult, FilesResultObject } from './types';
+import type { CreateConfig, MulterizeHonoBindings, HandleFieldsOptions, FileResult, FilesResultObject } from './types';
 
 // Multerize
 import Multerize from './multerize';
@@ -25,7 +25,7 @@ export {
     // Typings
     FileResult,
     FilesResultObject,
-    HonoFileBodyEnv,
+    MulterizeHonoBindings,
     HandleFieldsOptions,
 
     // Filters

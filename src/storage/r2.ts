@@ -1,13 +1,13 @@
 import type { Context } from 'hono';
-import type { StorageProvider, SmallFileResult, FileResult, R2StorageProviderOptions, R2StorageProviderClass, R2StorageProviderDestination, R2StorageProviderFileName, R2StorageProviderCustomMetadata } from './../types';
+import type { DefaultEnv, StorageProvider, SmallFileResult, FileResult, R2StorageProviderOptions, R2StorageProviderClass, R2StorageProviderDestination, R2StorageProviderFileName, R2StorageProviderCustomMetadata } from './../types';
 
 // Exceptions
 import MissingR2BucketError from './../exceptions/MissingR2BucketError';
 
-export class R2StorageProvider implements StorageProvider {
+export class R2StorageProvider<E extends DefaultEnv = any, V extends DefaultEnv = any> implements StorageProvider {
 
     private r2Client: R2Bucket = null!;
-    private envBucketKey: string = null!;
+    private envBucketKey: keyof E = null!;
     private r2StorageClass: R2StorageProviderClass = 'Standard';
     private returnBuffer: boolean = false;
 
@@ -17,7 +17,7 @@ export class R2StorageProvider implements StorageProvider {
 
     private disableDestinationTrailSlashWarning: boolean = false;
 
-    public constructor(options: R2StorageProviderOptions) {
+    public constructor(options: R2StorageProviderOptions<E, V>) {
         this.r2Client = options.r2Client ?? this.r2Client;
         this.envBucketKey = options.envBucketKey ?? this.envBucketKey;
         this.r2StorageClass = options.r2StorageClass ?? this.r2StorageClass;

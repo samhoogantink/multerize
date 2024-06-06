@@ -2,15 +2,19 @@ import { openAsBlob } from 'fs';
 import { Hono } from 'hono';
 import { Miniflare } from 'miniflare';
 import { describe, it, expect } from 'vitest';
-import { Multerize, HonoFileBodyEnv, R2StorageProvider, imagesOnlyFilter } from './../src';
+import { Multerize, MulterizeHonoBindings, R2StorageProvider, imagesOnlyFilter } from './../src';
 import type { R2Bucket } from '@cloudflare/workers-types/experimental';
 
-export type Bindings = {
+export type Env = {
     R2_BUCKET: R2Bucket;
 }
 
+export type Variables = {
+    test: string;
+} & MulterizeHonoBindings;
+
 describe('Hono Files', () => {
-    const app = new Hono<{ Variables: HonoFileBodyEnv; Bindings: Bindings; }>();
+    const app = new Hono<{ Variables: Variables; Bindings: Env; }>();
 
     const miniflare = new Miniflare({
         modules: true,
@@ -23,12 +27,14 @@ describe('Hono Files', () => {
             const testBucket = await miniflare.getR2Bucket('test');
 
             const multerize = new Multerize({
-                storage: new R2StorageProvider({
-                    // r2Client: testBucket,
-                    envBucketKey: 'R2_BUCKET',
+                storage: new R2StorageProvider<Env, MulterizeHonoBindings>({
+                    r2Client: testBucket,       // Because we've provided this, the envBucketKey will be ignored
+                    envBucketKey: 'R2_BUCKET',  // This is ignored because we've provided the r2Client
                     r2CustomMetadata: async (c, file) => ({ fieldName: file.fieldName }),
                     destination: async (c, file) => 'just_a_test/',
-                    fileName: async (c, file) => crypto.randomUUID() + '.png'
+                    fileName: async (c, file) => {
+                        return crypto.randomUUID() + '.png';
+                    }
                 }),
                 fileFilter: imagesOnlyFilter,
                 preservePath: true

@@ -1,16 +1,25 @@
-import type { Context, Env } from 'hono';
+import type { Context } from 'hono';
 
+export type DefaultEnv = {
+    [k: string]: any;
+}
 export type Nullable<T> = T | null;
 export type MiddlewareResponse = (c: Context, next: () => Promise<void>) => Promise<MiddlewareResponseValue>;
 export type MiddlewareResponseValue = Response|void;
 
 export type HandleTypes = 'VALUE' | 'ARRAY' | 'OBJECT' | 'NONE';
 
+/**
+ * Describes the fields to handle.
+ */
 export interface HandleFieldsOptions {
     name: string;
     maxCount: number;
 }
 
+/**
+ * Describes the handle options.
+ */
 export interface HandleOptions {
     type: HandleTypes;
     fields: HandleFieldsOptions[];
@@ -98,7 +107,7 @@ export interface FilesResultObject {
     [k: string]: FileResult[];
 }
 
-export type HonoFileBodyEnv = {
+export type MulterizeHonoBindings = {
     file: FileResult;
     files: FileResult[] | FilesResultObject;
 }
@@ -120,25 +129,27 @@ export interface StorageProvider {
  */
 export type R2StorageProviderClass = 'Standard' | 'InfrequentAccess';
 
+type HonoBindings<E, V> = { Variables: Omit<V, keyof MulterizeHonoBindings>; Bindings: E; };
+
 /**
  * The destination folder of the file in the R2 bucket.
  */
-export type R2StorageProviderDestination = <E extends Env = any>(c: Context<E>, file: SmallFileResult) => Promise<string>;
+export type R2StorageProviderDestination<E extends DefaultEnv = any, V extends DefaultEnv = any> = (c: Context<HonoBindings<E, V>>, file: SmallFileResult) => Promise<string>;
 
 /**
  * The filename of the file in the R2 bucket.
  */
-export type R2StorageProviderFileName = <E extends Env = any>(c: Context<E>, file: SmallFileResult) => Promise<string>;
+export type R2StorageProviderFileName<E extends DefaultEnv = any, V extends DefaultEnv = any> = (c: Context<HonoBindings<E, V>>, file: SmallFileResult) => Promise<string>;
 
 /**
  * Custom metadata for the file in the R2 bucket.
  */
-export type R2StorageProviderCustomMetadata = <E extends Env = any>(c: Context<E>, file: SmallFileResult) => Promise<Record<string, string>>;
+export type R2StorageProviderCustomMetadata<E extends DefaultEnv = any, V extends DefaultEnv = any> = (c: Context<HonoBindings<E, V>>, file: SmallFileResult) => Promise<Record<string, string>>;
 
 /**
  * Options for the R2 Storage Provider.
  */
-export interface R2StorageProviderOptions {
+export interface R2StorageProviderOptions<E extends DefaultEnv = any, V extends DefaultEnv = any> {
     /**
      * The R2 client.
      */
@@ -146,7 +157,7 @@ export interface R2StorageProviderOptions {
     /**
      * The environment variable key for the R2 bucket. Value will be used if `r2Client` is not provided.
      */
-    envBucketKey?: string;
+    envBucketKey?: keyof E;
     /**
      * The storage class of the file in the R2 bucket.
      * @link https://developers.cloudflare.com/r2/buckets/storage-classes/
@@ -160,7 +171,7 @@ export interface R2StorageProviderOptions {
      * The destination folder of the file in the R2 bucket. 
      * Note: MUST end with a forward slash.
      */
-    destination?: R2StorageProviderDestination;
+    destination?: R2StorageProviderDestination<E, V>;
     /**
      * Whether to disable the destination trail slash warning.
      * @default false
@@ -169,9 +180,9 @@ export interface R2StorageProviderOptions {
     /**
      * The filename of the file in the R2 bucket.
      */
-    fileName?: R2StorageProviderFileName;
+    fileName?: R2StorageProviderFileName<E, V>;
     /**
      * Custom metadata for the file in the R2 bucket.
      */
-    r2CustomMetadata?: R2StorageProviderCustomMetadata;
+    r2CustomMetadata?: R2StorageProviderCustomMetadata<E, V>;
 }

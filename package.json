@@ -1,0 +1,55 @@
+{
+  "name": "multerize",
+  "type": "module",
+  "version": "1.0.0-alpha.0",
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "hono",
+    "files"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "peerDependencies": {
+    "hono": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samhoogantink/hono-file-body.git"
+  },
+  "homepage": "https://github.com/samhoogantink/hono-file-body",
+  "author": "@samhoogantink",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240603.0",
+    "@types/node": "^20.14.2",
+    "hono": "^4.4.3",
+    "miniflare": "^3.20240524.2",
+    "tsup": "^8.1.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
+  }
+}

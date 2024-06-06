@@ -13,7 +13,7 @@ export const createDefaultConfig = (): Config => ({
         fileSize: Infinity,
         files: Infinity,
         parts: Infinity,
-        headerPairs: 2000
+        headerPairs: 2e3
     },
     preservePath: false
 });

@@ -7,6 +7,9 @@ import Multerize from './multerize';
 import { MemoryStorageProvider } from './storage/memory';
 import { R2StorageProvider } from './storage/r2';
 
+// Prebuilt filters
+import { imagesOnlyFilter, plainTextOnlyFilter, audioOnlyFilter, videoOnlyFilter, pdfOnlyFilter, zipOnlyFilter, rarOnlyFilter, compressedOnlyFilter } from './filters';
+
 // Exporting
 const createMulterize = (config?: CreateConfig) => {
     return new Multerize(config);
@@ -23,5 +26,15 @@ export {
     FileResult,
     FilesResultObject,
     HonoFileBodyEnv,
-    HandleFieldsOptions
+    HandleFieldsOptions,
+
+    // Filters
+    imagesOnlyFilter,
+    plainTextOnlyFilter,
+    audioOnlyFilter,
+    videoOnlyFilter,
+    pdfOnlyFilter,
+    zipOnlyFilter,
+    rarOnlyFilter,
+    compressedOnlyFilter
 }

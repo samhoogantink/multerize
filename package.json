@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "test": "vitest run",
-    "publish": "pnpm run build && pnpm publish"
+    "deploy": "pnpm run build && pnpm publish"
   },
   "keywords": [
     "hono",

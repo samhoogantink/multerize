@@ -1,6 +1,6 @@
 # Multerize
 
-Multerize is a Hono middleware for handling `multipart/form-data`, which is primarily used for uploading files. It's API is based on [Multer](https://github.com/expressjs/multer). Please note that it's not exactly the same, and currently is being focussed to work only on CloudFlare Workers. Other platforms are not tested.
+Multerize is a Hono middleware for handling `multipart/form-data`, which is primarily used for uploading files. Its API is based on [Multer](https://github.com/expressjs/multer). Please note that it's not exactly the same, and currently is being focussed to work only on CloudFlare Workers. Other platforms have not been tested.
 
 A demo can be found here: [multerize-workers-test](https://github.com/samhoogantink/multerize-workers-test)
 
@@ -62,7 +62,7 @@ app.post('/cool-profile', cpUpload, async (c) => {
 })
 ```
 
-In case you need to handle a text-only multipart form, you should use the `.none()` method:
+If you need to handle a text-only multipart form, you should use the .none() method:
 
 ```javascript
 import { Hono } from 'hono';
@@ -168,7 +168,7 @@ where you are handling the uploaded files.
 
 #### `R2Storage`
 
-The R2 storage engine gives you full control on storing files to your R2 bucket. This options can only be used inside CloudFlare Workers
+The R2 storage engine gives you full control on storing files to your R2 bucket. This option can only be used inside CloudFlare Workers
 
 ```typescript
 const storage = new R2StorageProvider<Env>({
@@ -195,7 +195,7 @@ const storage = new R2StorageProvider<Env>({
 const upload = new Multerize({ storage: storage })
 ```
 
-There are seven options available, `r2Client`, `envBucketKey`, `r2StorageClass`, `r2CustomMetaData`, `returnBuffer`, `destination` and `filename`. Some are
+There are seven options available: `r2Client`, `envBucketKey`, `r2StorageClass`, `r2CustomMetaData`, `returnBuffer`, `destination` and `filename`. Some are
 functions that determine where the file should be stored.
 
 `r2Client` is the R2 Client provided in CloudFlare Workers. 
@@ -215,8 +215,7 @@ If no `fileName` is given, the original file name will be used.
 
 #### `MemoryStorage`
 
-The memory storage engine stores the files in memory as `Buffer` objects. It
-doesn't have any options.
+The memory storage engine stores the files in memory as `Buffer` objects. It doesn't have any configurable options.
 
 ```javascript
 const storage = new MemoryStorageProvider()
@@ -234,7 +233,7 @@ memory storage is used.
 
 An object specifying the size limits of the following optional properties.
 
-The following integer values are available:
+The following integer values are supported:
 
 Key | Description | Default
 --- | --- | ---
@@ -250,8 +249,7 @@ Specifying the limits can help protect your site against denial of service (DoS)
 
 ### `fileFilter`
 
-Set this to a function to control which files should be uploaded and which
-should be skipped. The function should look like this:
+Set this to a function to control which files should be uploaded and which should be skipped:
 
 ```typescript
 const fileFilter = async (c, file) => {

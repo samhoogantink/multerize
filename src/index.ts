@@ -1,4 +1,4 @@
-import type { CreateConfig, MulterizeHonoBindings, HandleFieldsOptions, FileResult, FilesResultObject } from './types';
+import type { CreateConfig, MulterizeHonoBindings, StorageProvider, HandleFieldsOptions, FileResult, FilesResult, FilesResultObject } from './types';
 
 // Multerize
 import Multerize from './multerize';
@@ -23,6 +23,7 @@ export {
     createMulterize,
 
     // Storage providers
+    StorageProvider,
     MemoryStorageProvider,
     R2StorageProvider,
 
@@ -31,6 +32,7 @@ export {
 
     // Typings
     FileResult,
+    FilesResult,
     FilesResultObject,
     MulterizeHonoBindings,
     HandleFieldsOptions,

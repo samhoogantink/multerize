@@ -1,8 +1,8 @@
 {
   "name": "multerize",
   "type": "module",
-  "version": "1.0.0-alpha.6",
-  "description": "",
+  "version": "1.0.0-alpha.7",
+  "description": "Multerize is a Hono middleware for handling multipart/form-data, which is primarily used for uploading files.",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,13 +15,17 @@
   },
   "keywords": [
     "hono",
+    "file",
     "files",
     "upload",
     "multer",
     "cloudflare",
     "r2",
     "s3",
-    "buckets"
+    "buckets",
+    "file upload",
+    "bucket",
+    "workers"
   ],
   "exports": {
     ".": {

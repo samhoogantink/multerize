@@ -20,7 +20,8 @@ export default class Multerize {
             storage: config?.storage || this.config.storage,
             fileFilter: config?.fileFilter || this.config.fileFilter,
             limits: { ...this.config.limits, ...config?.limits },
-            preservePath: config?.preservePath || this.config.preservePath
+            preservePath: config?.preservePath || this.config.preservePath,
+            custom: { ...this.config.custom, ...config?.custom }
         };
     }
 
@@ -149,6 +150,10 @@ export default class Multerize {
      * @internal
      */
     private async _handle(c: Context, next: Next, options: HandleOptions, scopedField: Nullable<string> = null): Promise<MiddlewareResponseValue> {
+        // Initialize default values
+        c.set(this.config.custom.FILE_VARIABLE_KEY, null);
+        c.set(this.config.custom.FILES_VARIABLE_KEY, null);
+
         if(!c.req.header('Content-Type') || !c.req.header('Content-Type')?.includes('multipart/form-data')) {
             return await next();
         }
@@ -159,10 +164,6 @@ export default class Multerize {
         const parsedFiles = await this._filterFiles(unfilteredFiles);
         const files = await this.config.storage._handleFile(c, parsedFiles);
 
-        // Initialize default values
-        c.set('file', null);
-        c.set('files', null);
-
         // No files found, continue
         if(files.length === 0) {
             return await next();
@@ -170,10 +171,10 @@ export default class Multerize {
 
         if(type === 'VALUE') {
             const selectedFile = scopedField ? files.find(file => file.fieldName === scopedField) : files[0];
-            c.set('file', selectedFile || null);
+            c.set(this.config.custom.FILE_VARIABLE_KEY, selectedFile || null);
         } else if(type === 'ARRAY') {
             const filteredFiles = scopedField ? files.filter(file => file.fieldName === scopedField) : files;
-            c.set('files', filteredFiles);
+            c.set(this.config.custom.FILES_VARIABLE_KEY, filteredFiles);
         } else if(type === 'OBJECT') {
             const obj: FilesResultObject = {};
             for(const file of files) {
@@ -184,7 +185,7 @@ export default class Multerize {
                 obj[file.fieldName].push(file);
             }
 
-            c.set('files', obj);
+            c.set(this.config.custom.FILES_VARIABLE_KEY, obj);
         }
 
         return await next();

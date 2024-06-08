@@ -111,6 +111,7 @@ Key | Description
 `fileFilter` | Function to control which files are accepted
 `limits` | Limits of the uploaded data
 `preservePath` | Keep the full path of files instead of just the base name
+`custom` | Overwrite some variables, for example if the Variable key 'file' and 'files' are already in use by another Middleware
 
 In an average web app, no options are required, and configured as shown in
 the following example.

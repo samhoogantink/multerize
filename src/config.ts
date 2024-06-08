@@ -15,5 +15,9 @@ export const createDefaultConfig = (): Config => ({
         parts: Infinity,
         headerPairs: 2e3
     },
-    preservePath: false
+    preservePath: false,
+    custom: {
+        FILE_VARIABLE_KEY: 'file',
+        FILES_VARIABLE_KEY: 'files'   
+    }
 });

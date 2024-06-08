@@ -2,7 +2,7 @@ import { openAsBlob } from 'fs';
 import { Hono } from 'hono';
 import { Miniflare } from 'miniflare';
 import { describe, it, expect } from 'vitest';
-import { Multerize, MulterizeHonoBindings, R2StorageProvider, imagesOnlyFilter } from './../src';
+import { Multerize, MulterizeHonoBindings, R2StorageProvider, imagesOnlyFilter, FileResult, FilesResult } from './../src';
 import type { R2Bucket } from '@cloudflare/workers-types/experimental';
 
 export type Env = {
@@ -10,8 +10,11 @@ export type Env = {
 }
 
 export type Variables = {
-    test: string;
-} & MulterizeHonoBindings;
+    TEST_TO_SHOW_YOU_CAN_HAVE_CUSTOM_VARIABLES: string;
+    my_file: FileResult;
+    my_files: FilesResult;
+}
+// } & MulterizeHonoBindings;
 
 describe('Hono Files', () => {
     const app = new Hono<{ Variables: Variables; Bindings: Env; }>();
@@ -37,13 +40,17 @@ describe('Hono Files', () => {
                     }
                 }),
                 fileFilter: imagesOnlyFilter,
-                preservePath: true
+                preservePath: true,
+                custom: {
+                    FILE_VARIABLE_KEY: 'my_file',
+                    FILES_VARIABLE_KEY: 'my_files'
+                }
             });
 
             const query = multerize.single('file'); // extract single file
             
             app.post('/upload', query, async (c) => {
-                const file = c.get('file');
+                const file = c.var.my_file;
 
                 return c.json({ 
                     file

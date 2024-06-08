@@ -30,13 +30,41 @@ export interface Config {
     fileFilter: (c: Context, file: SmallFileResult) => Promise<boolean>;
     limits: CreateConfigLimits;
     preservePath: boolean;
+    custom: ConfigCustom;
+}
+
+export interface ConfigCustom {
+    /**
+     * A custom key for the file variable.
+     */
+    FILE_VARIABLE_KEY: string;
+    /**
+     * A custom key for the files variable.
+     */
+    FILES_VARIABLE_KEY: string;
 }
 
 export interface CreateConfig {
+    /**
+     * The storage provider.
+     */
     storage?: Config['storage'];
+    /**
+     * A custom file filter.
+     */
     fileFilter?: Config['fileFilter'];
+    /**
+     * The limits for the file upload.
+     */
     limits?: Partial<Config['limits']>;
+    /**
+     * Whether to preserve the file path.
+     */
     preservePath?: Config['preservePath'];
+    /**
+     * Custom configuration.
+     */
+    custom?: Partial<Config['custom']>;
 }
 
 export interface CreateConfigLimits {
@@ -107,9 +135,11 @@ export interface FilesResultObject {
     [k: string]: FileResult[];
 }
 
+export type FilesResult = FileResult[] | FilesResultObject;
+
 export type MulterizeHonoBindings = {
     file: FileResult;
-    files: FileResult[] | FilesResultObject;
+    files: FilesResult;
 }
 
 export interface ParseBodyResult {
